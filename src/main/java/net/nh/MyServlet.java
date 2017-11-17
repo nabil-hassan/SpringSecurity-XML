@@ -26,37 +26,6 @@ public class MyServlet extends HttpServlet {
 
         RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/yan.jsp");
         dispatcher.forward(request, response);
-        dispatcher.include();
-    }
-
-    public class Order {
-        int noItems;
-        String id;
-        String userId;
-
-        public int getNoItems() {
-            return noItems;
-        }
-
-        public void setNoItems(int noItems) {
-            this.noItems = noItems;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public void setId(String id) {
-            this.id = id;
-        }
-
-        public String getUserId() {
-            return userId;
-        }
-
-        public void setUserId(String userId) {
-            this.userId = userId;
-        }
     }
 
 }
