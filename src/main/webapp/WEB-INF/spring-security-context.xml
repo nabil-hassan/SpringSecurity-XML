@@ -8,10 +8,13 @@
            http://www.springframework.org/schema/security/spring-security.xsd">
 
     <http>
-        <intercept-url pattern="/sth.do" access="i" />
+        <intercept-url pattern="/login.jsp*" access="isAnonymous()"/>
         <intercept-url pattern="/**" access="hasAuthority('USER')" />
-        <form-login/>
-        <logout/>
+        <form-login
+                login-page='/login.jsp'
+                authentication-failure-url="/login.jsp?error=true"
+                always-use-default-target="true"/>
+        <logout logout-success-url="/login.jsp"/>
     </http>
 
     <authentication-manager>
