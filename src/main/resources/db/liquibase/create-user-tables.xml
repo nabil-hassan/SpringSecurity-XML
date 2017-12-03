@@ -5,30 +5,18 @@
 
     <changeSet id="createUsersTable" author="NabilH">
         <preConditions>
-            <not>
-                <tableExists tableName="USERS"/>
-            </not>
+            <not><tableExists tableName="USERS"/></not>
         </preConditions>
-        <createTable tableName="USERS" schemaName="public">
-            <column name="username" type="varchar2(25)"/>
+        <createTable tableName="USERS" schemaName="PUBLIC">
+            <column name="username" type="varchar2(25)" />
             <column name="password" type="varchar2(25)"/>
             <column name="enabled" type="boolean"/>
         </createTable>
+        <addNotNullConstraint tableName="USERS" columnName="username" columnDataType="varchar2(25)"/>
+        <addPrimaryKey tableName="USERS" columnNames="username" constraintName="pk_users_username"/>
     </changeSet>
 
-    <changeSet id="createAuthoritiesTable" author="NabilH">
-        <preConditions>
-            <not>
-                <tableExists tableName="AUTHORITIES"/>
-            </not>
-        </preConditions>
-        <createTable tableName="AUTHORITIES" schemaName="public">
-            <column name="username" type="varchar2(25)"/>
-            <column name="authority" type="varchar2(25)"/>
-        </createTable>
-    </changeSet>
-
-    <changeSet id="createInitialUsers" author="NabilH">
+    <changeSet id="insertInitialUsers" author="NabilH">
         <preConditions>
             <tableExists tableName="USERS"/>
         </preConditions>
@@ -41,22 +29,115 @@
         </sql>
     </changeSet>
 
-    <changeSet id="createInitialAuthorities" author="NabilH">
+    <changeSet id="createAuthoritiesTable" author="NabilH">
+        <preConditions>
+            <not><tableExists tableName="AUTHORITIES"/></not>
+        </preConditions>
+        <createTable tableName="AUTHORITIES" schemaName="PUBLIC">
+            <column name="authority" type="varchar2(25)"/>
+        </createTable>
+        <addNotNullConstraint tableName="AUTHORITIES" columnName="authority" columnDataType="varchar2(25)"/>
+        <addPrimaryKey tableName="AUTHORITIES" columnNames="authority" constraintName="pk_authorities_authority"/>
+    </changeSet>
+
+    <changeSet id="insertInitialAuthorities" author="NabilH">
         <preConditions>
             <tableExists tableName="AUTHORITIES"/>
         </preConditions>
         <sql>
-            INSERT INTO AUTHORITIES(username, authority)
-            VALUES ('admin', 'view');
+            INSERT INTO AUTHORITIES(authority)
+            VALUES ('admin');
             --
-            INSERT INTO AUTHORITIES(username, authority)
-            VALUES ('admin', 'admin');
-            --
-            INSERT INTO AUTHORITIES(username, authority)
-            VALUES ('user', 'view');
+            INSERT INTO AUTHORITIES(authority)
+            VALUES ('view');
         </sql>
     </changeSet>
 
+    <changeSet id="createGroupsTable" author="NabilH">
+        <preConditions>
+            <not><tableExists tableName="GROUPS"/></not>
+        </preConditions>
+        <createTable tableName="GROUPS" schemaName="PUBLIC">
+            <column name="id" type="int"/>
+            <column name="group_name" type="varchar"/>
+        </createTable>
+        <addNotNullConstraint tableName="GROUPS" columnName="id" columnDataType="int"/>
+        <addPrimaryKey tableName="GROUPS" schemaName="PUBLIC" columnNames="id" constraintName="pk_groups_id"/>
+    </changeSet>
 
+    <changeSet id="insertInitialGroups" author="NabilH">
+        <preConditions>
+            <tableExists tableName="GROUPS"/>
+        </preConditions>
+        <sql>
+            INSERT INTO GROUPS (id, group_name)
+            VALUES (1, 'Admin Group');
+            --
+            INSERT INTO GROUPS (id, group_name)
+            VALUES (2, 'Default Group');
+            --
+        </sql>
+    </changeSet>
+
+    <changeSet id="createGroupAuthoritiesTable" author="NabilH">
+        <preConditions>
+            <not><tableExists tableName="GROUP_AUTHORITIES"/></not>
+        </preConditions>
+        <createTable tableName="group_authorities">
+            <column name="group_id" type="int"/>
+            <column name="authority" type="varchar(25)"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="group_authorities" baseColumnNames="group_id"
+                                 constraintName="fk_group_authorities_group_id" referencedTableName="groups"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="group_authorities" baseColumnNames="authority"
+                                 constraintName="fk_group_authorities_authority" referencedTableName="authorities"
+                                 referencedColumnNames="authority"/>
+    </changeSet>
+
+    <changeSet id="insertInitialGroupAuthorities" author="NabilH">
+        <preConditions>
+            <tableExists tableName="GROUP_AUTHORITIES"/>
+        </preConditions>
+        <sql>
+            INSERT INTO GROUP_AUTHORITIES(group_id, authority)
+            VALUES(1, 'admin');
+            --
+            INSERT INTO GROUP_AUTHORITIES(group_id, authority)
+            VALUES(1, 'view');
+            --
+            INSERT INTO GROUP_AUTHORITIES(group_id, authority)
+            VALUES(2, 'view');
+        </sql>
+    </changeSet>
+
+    <changeSet id="createGroupMembersTable" author="NabilH">
+        <preConditions>
+            <not><tableExists tableName="group_members"/></not>
+        </preConditions>
+        <createTable tableName="group_members">
+            <column name="group_id" type="int"/>
+            <column name="username" type="varchar(25)"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="group_members" baseColumnNames="group_id"
+                                 constraintName="fk_group_members_group_id" referencedTableName="groups"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="group_members" baseColumnNames="username"
+                                 constraintName="fk_group_members_username" referencedTableName="users"
+                                 referencedColumnNames="username"/>
+    </changeSet>
+
+    <changeSet id="createInitialGroupMembers" author="NabilH">
+        <preConditions>
+            <tableExists tableName="GROUP_MEMBERS"/>
+        </preConditions>
+        <sql>
+            INSERT INTO GROUP_MEMBERS(group_id, username)
+            VALUES(1, 'admin');
+            --
+            INSERT INTO GROUP_MEMBERS(group_id, username)
+            VALUES(2, 'user');
+        </sql>
+    </changeSet>
 
 </databaseChangeLog>
