@@ -1,0 +1,62 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="createUsersTable" author="NabilH">
+        <preConditions>
+            <not>
+                <tableExists tableName="USERS"/>
+            </not>
+        </preConditions>
+        <createTable tableName="USERS" schemaName="public">
+            <column name="username" type="varchar2(25)"/>
+            <column name="password" type="varchar2(25)"/>
+            <column name="enabled" type="boolean"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="createAuthoritiesTable" author="NabilH">
+        <preConditions>
+            <not>
+                <tableExists tableName="AUTHORITIES"/>
+            </not>
+        </preConditions>
+        <createTable tableName="AUTHORITIES" schemaName="public">
+            <column name="username" type="varchar2(25)"/>
+            <column name="authority" type="varchar2(25)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="createInitialUsers" author="NabilH">
+        <preConditions>
+            <tableExists tableName="USERS"/>
+        </preConditions>
+        <sql>
+            INSERT INTO USERS(username, password, enabled)
+            VALUES ('admin', 'admin', true);
+            --
+            INSERT INTO USERS(username, password, enabled)
+            VALUES ('user', 'user', true);
+        </sql>
+    </changeSet>
+
+    <changeSet id="createInitialAuthorities" author="NabilH">
+        <preConditions>
+            <tableExists tableName="AUTHORITIES"/>
+        </preConditions>
+        <sql>
+            INSERT INTO AUTHORITIES(username, authority)
+            VALUES ('admin', 'view');
+            --
+            INSERT INTO AUTHORITIES(username, authority)
+            VALUES ('admin', 'admin');
+            --
+            INSERT INTO AUTHORITIES(username, authority)
+            VALUES ('user', 'view');
+        </sql>
+    </changeSet>
+
+
+
+</databaseChangeLog>

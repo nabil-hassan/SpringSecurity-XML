@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="h2DataSource" class="org.h2.jdbcx.JdbcDataSource">
+        <property name="url" value="jdbc:h2:mem:public;LOCK_MODE=0;DB_CLOSE_DELAY=-1;MODE=Oracle;INIT=CREATE SCHEMA IF NOT EXISTS public"/>
+        <property name="user" value="sa"/>
+        <property name="password" value="sa"/>
+    </bean>
+
+    <bean id="h2Server" class="org.h2.tools.Server" factory-method="createTcpServer"
+          init-method="start" destroy-method="stop">
+        <constructor-arg>
+            <list>
+                <value>-tcpAllowOthers</value>
+                <value>-tcpPort</value>
+                <value>8043</value>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="h2WebServer" class="org.h2.tools.Server" factory-method="createWebServer"
+          init-method="start" destroy-method="stop">
+        <constructor-arg>
+            <list>
+                <value>-web</value>
+                <value>-webAllowOthers</value>
+                <value>-webPort</value>
+                <value>8091</value>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="liquibase" class="liquibase.integration.spring.SpringLiquibase">
+        <property name="dataSource" ref="h2DataSource"/>
+        <property name="changeLog" value="classpath:db/liquibase/create-user-tables.xml"/>
+    </bean>
+
+</beans>

@@ -9,7 +9,7 @@
 
     <http>
         <intercept-url pattern="/login.jsp*" access="isAnonymous()"/>
-        <intercept-url pattern="/**" access="hasAuthority('USER')" />
+        <intercept-url pattern="/**" access="hasAuthority('view')"/>
         <form-login
                 login-page='/login.jsp'
                 authentication-failure-url="/login.jsp?error=true"
@@ -19,10 +19,7 @@
 
     <authentication-manager>
         <authentication-provider>
-            <user-service>
-                <user name="user" password="user" authorities="USER" />
-                <user name="admin" password="admin" authorities="USER, ADMIN" />
-            </user-service>
+            <jdbc-user-service data-source-ref="h2DataSource"/>
         </authentication-provider>
     </authentication-manager>
 
